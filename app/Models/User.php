@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'fecha_nacimiento'
     ];
 
     /**
@@ -41,4 +43,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $appends = ['age'];
+
+    public function getAgeAttribute(){
+        return Carbon::parse($this->fecha_nacimiento)->age;
+    }
+
+    public function set_users(){
+        $users = User::join('user_domicilios', "users.id","=", "user_domicilios.user_id")->get();
+        return $users;
+    }
 }
